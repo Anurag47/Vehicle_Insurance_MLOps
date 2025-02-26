@@ -26,7 +26,7 @@
 16. EDA and Feature Engineering notebook added.
 
 ----------------------------------------------- Data Ingestion -----------------------------------------------
-17. Before we work on "Data Ingestion" component >> Declare variables within constants.__init__.py file >> 
+17. Before working on "Data Ingestion" component >> Declare variables within constants.__init__.py file >> 
     add code to configuration.mongo_db_connections.py file and define the func for mondodb connection >> 
     Inside "data_access" folder, add code to proj1_data that will use mongo_db_connections.py
     to connect with DB, fetch data in key-val format and transform that to df >>
@@ -34,15 +34,18 @@
     add code to entity.artifact_entity.py file till DataIngestionArtifact class >>
     add code to components.data_ingestion.py file >> add code to training pipeline >> 
     run demo.py (set mongodb connection url first, see next step)
-18. To setup the connection url on mac(also work for windows), open bash/powershell terminal and run below command:
-                        *** For Bash ***
-    set: export MONGODB_URL="mongodb+srv://<username>:<password>......"
-    check: echo $MONGODB_URL
-                        *** For Powershell ***
+
+18. To setup the connection url open powershell terminal and run below command:
     set: $env:MONGODB_URL = "mongodb+srv://<username>:<password>......"
     check: echo $env:MONGODB_URL
+    or create a .env file and add the variables there
+    To load and access the variables defined in the .env file, you can use a Python package called python-dotenv
+    pip install python-dotenv
+      from dotenv import load_dotenv
+      import os
 
-    To setup the connection url on Windows, open env variable setting option and add a new variable:
-    Name: MONGODB_URL, Value = <url>
-    Also add "artifact" dir to .gitignore file
+      # Load the environment variables from the .env file
+      load_dotenv()
 
+      # Access the environment variables using os.getenv  (common for any approach)
+      api_key = os.getenv('API_KEY')
