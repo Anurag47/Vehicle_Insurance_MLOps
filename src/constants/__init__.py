@@ -1,5 +1,8 @@
 import os
 from datetime import date
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # For MongoDB connection
 DATABASE_NAME = "Proj1"
@@ -27,7 +30,7 @@ REGION_NAME = "us-east-1"
 
 
 """
-Data Ingestion related constant start with DATA_INGESTION VAR NAME
+Data Ingestion related constant start with DATA_INGESTION VARIABLES NAME
 """
 DATA_INGESTION_COLLECTION_NAME: str = "Proj1-Data"
 DATA_INGESTION_DIR_NAME: str = "data_ingestion"
@@ -36,13 +39,13 @@ DATA_INGESTION_INGESTED_DIR: str = "ingested"
 DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO: float = 0.25
 
 """
-Data Validation realted contant start with DATA_VALIDATION VAR NAME
+Data Validation realted contant start with DATA_VALIDATION VARIABLES NAME
 """
 DATA_VALIDATION_DIR_NAME: str = "data_validation"
 DATA_VALIDATION_REPORT_FILE_NAME: str = "report.yaml"
 
 """
-Data Transformation ralated constant start with DATA_TRANSFORMATION VAR NAME
+Data Transformation ralated constant start with DATA_TRANSFORMATION VARIABLES NAME
 """
 DATA_TRANSFORMATION_DIR_NAME: str = "data_transformation"
 DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = "transformed"
@@ -54,6 +57,7 @@ MODEL TRAINER related constant start with MODEL_TRAINER variable name
 MODEL_TRAINER_DIR_NAME: str = "model_trainer"
 MODEL_TRAINER_TRAINED_MODEL_DIR: str = "trained_model"
 MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"
+MODEL_TRAINER_METRIC_FILE_NAME: str = "metric.yaml"
 MODEL_TRAINER_EXPECTED_SCORE: float = 0.6
 MODEL_TRAINER_MODEL_CONFIG_FILE_PATH: str = os.path.join("config", "model.yaml")
 MODEL_TRAINER_N_ESTIMATORS=300

@@ -17,8 +17,8 @@
    >> copy and save the connection string with you(replace password). >> Done.
 10. Create folder "notebook" >> do step 11 >>  create file "mongoDB_demo.ipynb" >> select kernal>python kernal>vehicle>>
 11. Dataset added to notebook folder
-12. Push your data to mongoDB database from your python notebook.
-13. Go to mongoDB Atlas >> Database >> browse collection >> see your data in key value format
+12. Push data to mongoDB database from python notebook.
+13. Go to mongoDB Atlas >> Database >> browse collection >> see the data in key value format
 
 -------------------------------------- logging, exception and notebooks --------------------------------------
 14. Write the logger file and test it on demo.py
@@ -49,3 +49,17 @@
 
       # Access the environment variables using os.getenv  (common for any approach)
       api_key = os.getenv('API_KEY')
+
+---------------------------- Data Validation, Data Transformation & Model Trainer ----------------------------
+
+19. Complete the work on utils.main_utils.py and config.schema.yaml file (add entire info about dataset for data validation step)
+20. Work on the "Data Validation" component the same way as done in step 17 for Data Ingestion. (Workflow mentioned below)
+Workflow
+- Constant
+- Config_Entity
+- Artifact_Entity
+- Component
+- Pipeline
+- app.py / demo.py
+21. Work on the "Data Transformation" component the same way as done in above step. (add estimator.py to entity folder)
+22. Work on the "Model Trainer" component the the same way as done in above step. (add class to estimator.py in entity folder)
