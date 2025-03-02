@@ -5,6 +5,7 @@ import numpy as np
 import dill
 import yaml
 from pandas import DataFrame
+import json
 
 from src.exception import MyException
 from src.logger import logging
@@ -57,7 +58,30 @@ def save_numpy_array_data(file_path: str, array: np.array):
             np.save(file_obj, array)
     except Exception as e:
         raise MyException(e, sys) from e
+    
+def save_json_data(file_path: str, data: dict) -> None:
+    """
+    Save numpy array data to file
+    file_path: str location of file to save
+    array: np.array data to save
+    """
+    try:
+        dir_path = os.path.dirname(file_path)
+        os.makedirs(dir_path, exist_ok=True)
+        with open(file_path, 'w') as file_obj:
+            json.dump(data, file_obj)
+    except Exception as e:
+        raise MyException(e, sys) from e
 
+def load_json_data(file_path: str) -> dict:
+    """
+    load numpy array data from file
+    file_path: str location of file to load
+    return: json dic
+    """
+    with open(file_path, "r") as f:
+        data = json.load(f)
+        return data
 
 def load_numpy_array_data(file_path: str) -> np.array:
     """

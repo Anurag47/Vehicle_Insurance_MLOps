@@ -21,6 +21,7 @@ PREPROCSSING_OBJECT_FILE_NAME = "preprocessing.pkl"
 FILE_NAME: str = "data.csv"
 TRAIN_FILE_NAME: str = "train.csv"
 TEST_FILE_NAME: str = "test.csv"
+FILTERED_POLICY_SALES_FILE_NAME = "filtered_policy_sales.json"
 SCHEMA_FILE_PATH = os.path.join("config", "schema.yaml")
 
 
@@ -62,11 +63,11 @@ MODEL_TRAINER_EXPECTED_SCORE: float = 0.6
 MODEL_TRAINER_MODEL_CONFIG_FILE_PATH: str = os.path.join("config", "model.yaml")
 MODEL_TRAINER_N_ESTIMATORS=300
 MODEL_TRAINER_MIN_SAMPLES_SPLIT: int = 7
-MODEL_TRAINER_MIN_SAMPLES_LEAF: int = 8
-MIN_SAMPLES_SPLIT_MAX_DEPTH: int = 3
+MODEL_TRAINER_MIN_SAMPLES_LEAF: int = 4
+MIN_SAMPLES_SPLIT_MAX_DEPTH: int = 4
 MIN_SAMPLES_SPLIT_CRITERION: str = 'gini'
-MIN_SAMPLES_SPLIT_RANDOM_STATE: int = 101
-
+MIN_SAMPLES_SPLIT_RANDOM_STATE: int = 42
+MODEL_CLASS_WEIGHT = 'balanced'
 """
 MODEL Evaluation related constants
 """

@@ -1,7 +1,7 @@
 # 🚀 Vehicle Data Processing & ML Pipeline
 
 ## 📌 Project Overview
-This project is a **production-grade AI agent** that leverages **MongoDB, FastAPI, AWS, Docker, and CI/CD pipelines** to build a scalable **Machine Learning Pipeline** for vehicle data processing. The system is deployed on an **EC2 instance** using a **Dockerized ECR image** and features robust **data ingestion, validation, transformation, model training, and deployment** workflows.
+This project is a **production-grade MLOps Application** that leverages **MongoDB, FastAPI, AWS, Docker, and CI/CD pipelines** to build a scalable **Machine Learning Pipeline** for vehicle data processing. The system is deployed on an **EC2 instance** using a **Dockerized ECR image** and features robust **data ingestion, validation, transformation, model training, and deployment** workflows.
 
 ---
 

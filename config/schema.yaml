@@ -15,26 +15,24 @@ columns:
 
 numerical_columns:
   - Age
-  - Driving_License
-  - Region_Code
-  - Previously_Insured
-  - Annual_Premium
-  - Policy_Sales_Channel
   - Vintage
-  - Response
+  - Vehicle_Age
+  - Annual_Premium
 
 categorical_columns:
+  - Policy_Sales_Channel
+  - Region_Code
   - Gender
-  - Vehicle_Age
+  - Driving_License
+  - Previously_Insured
   - Vehicle_Damage
 
 drop_columns: _id
 
 # for data transformation
-num_features:
+mm_columns:
   - Age
   - Vintage
 
-
-mm_columns:
+ss_columns:
   - Annual_Premium

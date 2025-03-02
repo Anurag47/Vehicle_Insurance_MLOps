@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from starlette.responses import HTMLResponse, RedirectResponse
+from src.utils.main_utils import load_json_data
 from uvicorn import run as app_run
+import logging
 
 from typing import Optional
 
@@ -41,17 +42,16 @@ class DataForm:
     """
     def __init__(self, request: Request):
         self.request: Request = request
-        self.Gender: Optional[int] = None
+        self.Gender: Optional[str] = None
         self.Age: Optional[int] = None
         self.Driving_License: Optional[int] = None
-        self.Region_Code: Optional[float] = None
+        self.Region_Code: Optional[int] = None
         self.Previously_Insured: Optional[int] = None
         self.Annual_Premium: Optional[float] = None
-        self.Policy_Sales_Channel: Optional[float] = None
+        self.Policy_Sales_Channel: Optional[int] = None
         self.Vintage: Optional[int] = None
-        self.Vehicle_Age_lt_1_Year: Optional[int] = None
-        self.Vehicle_Age_gt_2_Years: Optional[int] = None
-        self.Vehicle_Damage_Yes: Optional[int] = None
+        self.Vehicle_Age: Optional[str] = None
+        self.Vehicle_Damage: Optional[str] = None
                 
 
     async def get_vehicle_data(self):
@@ -68,9 +68,8 @@ class DataForm:
         self.Annual_Premium = form.get("Annual_Premium")
         self.Policy_Sales_Channel = form.get("Policy_Sales_Channel")
         self.Vintage = form.get("Vintage")
-        self.Vehicle_Age_lt_1_Year = form.get("Vehicle_Age_lt_1_Year")
-        self.Vehicle_Age_gt_2_Years = form.get("Vehicle_Age_gt_2_Years")
-        self.Vehicle_Damage_Yes = form.get("Vehicle_Damage_Yes")
+        self.Vehicle_Age = form.get("Vehicle_Age")
+        self.Vehicle_Damage = form.get("Vehicle_Damage")
 
 # Route to render the main page with the form
 @app.get("/", tags=["authentication"])
@@ -78,8 +77,10 @@ async def index(request: Request):
     """
     Renders the main HTML form page for vehicle data input.
     """
+    policy_dropdown_data = load_json_data(r'notebook\filtered_policy_sales.json')
+    data = [int(float(key)) for key in policy_dropdown_data.keys()]
     return templates.TemplateResponse(
-            "vehicledata.html",{"request": request, "context": "Rendering"})
+            "vehicledata.html",{"request": request, "context": "Rendering", "options": data})
 
 # Route to trigger the model training process
 @app.get("/train")
@@ -114,9 +115,8 @@ async def predictRouteClient(request: Request):
                                 Annual_Premium = form.Annual_Premium,
                                 Policy_Sales_Channel = form.Policy_Sales_Channel,
                                 Vintage = form.Vintage,
-                                Vehicle_Age_lt_1_Year = form.Vehicle_Age_lt_1_Year,
-                                Vehicle_Age_gt_2_Years = form.Vehicle_Age_gt_2_Years,
-                                Vehicle_Damage_Yes = form.Vehicle_Damage_Yes
+                                Vehicle_Age = form.Vehicle_Age,
+                                Vehicle_Damage = form.Vehicle_Damage
                                 )
 
         # Convert form data into a DataFrame for the model

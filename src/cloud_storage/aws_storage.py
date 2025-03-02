@@ -165,6 +165,9 @@ class SimpleStorageService:
         logging.info("Entered the upload_file method of SimpleStorageService class")
         try:
             logging.info(f"Uploading {from_filename} to {to_filename} in {bucket_name}")
+            logging.info(f"AWS Key ID: {self.s3_client._request_signer._credentials.access_key}")
+            logging.info(f"AWS Secret Key: {self.s3_client._request_signer._credentials.secret_key}")
+            logging.info(f"AWS Session Token: {self.s3_client._request_signer._credentials.token}")
             self.s3_resource.meta.client.upload_file(from_filename, bucket_name, to_filename)
             logging.info(f"Uploaded {from_filename} to {to_filename} in {bucket_name}")
 

@@ -1,10 +1,10 @@
 from src.entity.config_entity import ModelEvaluationConfig
-from src.entity.artifact_entity import ModelTrainerArtifact, DataIngestionArtifact, ModelEvaluationArtifact
+from src.entity.artifact_entity import ModelTrainerArtifact, DataIngestionArtifact, ModelEvaluationArtifact, DataTransformationArtifact
 from sklearn.metrics import f1_score
 from src.exception import MyException
-from src.constants import TARGET_COLUMN
+from src.constants import TARGET_COLUMN, SCHEMA_FILE_PATH
 from src.logger import logging
-from src.utils.main_utils import load_object
+from src.utils.main_utils import load_object, load_json_data, read_yaml_file
 import sys
 import pandas as pd
 from typing import Optional
@@ -22,11 +22,13 @@ class EvaluateModelResponse:
 class ModelEvaluation:
 
     def __init__(self, model_eval_config: ModelEvaluationConfig, data_ingestion_artifact: DataIngestionArtifact,
-                 model_trainer_artifact: ModelTrainerArtifact):
+                 model_trainer_artifact: ModelTrainerArtifact, data_transformation_artifact: DataTransformationArtifact):
         try:
             self.model_eval_config = model_eval_config
             self.data_ingestion_artifact = data_ingestion_artifact
             self.model_trainer_artifact = model_trainer_artifact
+            self.data_transformation_artifact = data_transformation_artifact
+            self._schema_config = read_yaml_file(file_path=SCHEMA_FILE_PATH)
         except Exception as e:
             raise MyException(e, sys) from e
 
@@ -50,35 +52,44 @@ class ModelEvaluation:
         except Exception as e:
             raise  MyException(e,sys)
         
-    def _map_gender_column(self, df):
-        """Map Gender column to 0 for Female and 1 for Male."""
-        logging.info("Mapping 'Gender' column to binary values")
+    def _map_columns(self, df):
+        """
+        Map Gender column to 0 for Female and 1 for Male.
+        Map Vehicle_Damage col to 0 for No and 1 for Yes
+        Map Vehicle_Age col to < 1 Year for 0, 1-2 Year for 1 & > 2 Years for 2}     
+        """
+        logging.info("Mapping columns")
         df['Gender'] = df['Gender'].map({'Female': 0, 'Male': 1}).astype(int)
-        return df
-
-    def _create_dummy_columns(self, df):
-        """Create dummy variables for categorical features."""
-        logging.info("Creating dummy variables for categorical features")
-        df = pd.get_dummies(df, drop_first=True)
-        return df
-
-    def _rename_columns(self, df):
-        """Rename specific columns and ensure integer types for dummy columns."""
-        logging.info("Renaming specific columns and casting to int")
-        df = df.rename(columns={
-            "Vehicle_Age_< 1 Year": "Vehicle_Age_lt_1_Year",
-            "Vehicle_Age_> 2 Years": "Vehicle_Age_gt_2_Years"
-        })
-        for col in ["Vehicle_Age_lt_1_Year", "Vehicle_Age_gt_2_Years", "Vehicle_Damage_Yes"]:
-            if col in df.columns:
-                df[col] = df[col].astype('int')
+        df['Vehicle_Damage'] = df['Vehicle_Damage'].map( {'No': 0, 'Yes': 1} ).astype(int)
+        df['Vehicle_Age'] = df['Vehicle_Age'].map( {'< 1 Year': 0, '1-2 Year': 1, '> 2 Years': 2} ).astype(int)
         return df
     
+    def _tranform_policy_sales_channel(self, df):
+        """
+        Use the same artifact to transform the data
+        Here we check if the policy_sales_channel value_count() > 1000 if so we keep that value else we 
+        replace it with 0  
+        """
+        logging.info("Transforming policy_sales_channel column")
+        filtered_policy_sales = None
+        filtered_policy_sales = load_json_data(self.data_transformation_artifact.filtered_policy_sales_path)
+        
+        df['Policy_Sales_Channel'] = df['Policy_Sales_Channel'].map(lambda x: x if x in filtered_policy_sales else 0).astype(int)
+        return df
+
+    def _convert_to_cat_columns(self, df):
+        """Converts columns to categorical type."""
+        logging.info("Converting columns to categorical type")
+        df['Region_Code'] = df['Region_Code'].astype(int).astype('category')
+        df['Policy_Sales_Channel'] = df['Policy_Sales_Channel'].astype('category')
+        return df
+
     def _drop_id_column(self, df):
         """Drop the 'id' column if it exists."""
         logging.info("Dropping 'id' column")
-        if "_id" in df.columns:
-            df = df.drop("_id", axis=1)
+        drop_col = self._schema_config['drop_columns']
+        if drop_col in df.columns:
+            df = df.drop(drop_col, axis=1)
         return df
 
     def evaluate_model(self) -> EvaluateModelResponse:
@@ -96,10 +107,10 @@ class ModelEvaluation:
 
             logging.info("Test data loaded and now transforming it for prediction...")
 
-            x = self._map_gender_column(x)
+            x = self._map_columns(x)
+            x = self._tranform_policy_sales_channel(x)
             x = self._drop_id_column(x)
-            x = self._create_dummy_columns(x)
-            x = self._rename_columns(x)
+            x = self._convert_to_cat_columns(x)
 
             trained_model = load_object(file_path=self.model_trainer_artifact.trained_model_file_path)
             logging.info("Trained model loaded/exists.")
