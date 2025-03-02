@@ -74,6 +74,7 @@ MODEL Evaluation related constants
 MODEL_EVALUATION_CHANGED_THRESHOLD_SCORE: float = 0.02
 MODEL_BUCKET_NAME = "my-model-mlopsproj-anurag"
 MODEL_PUSHER_S3_KEY = "model-registry"
+MODEL_POLICY_SALES_JSON = "filtered_policy_sales.json"
 
 
 APP_HOST = "0.0.0.0"

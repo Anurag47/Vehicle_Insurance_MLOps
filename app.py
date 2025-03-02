@@ -5,8 +5,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.utils.main_utils import load_json_data
 from uvicorn import run as app_run
-import logging
-
+from src.configuration.aws_connection import S3Client
+from src.entity.config_entity import VehiclePredictorConfig
+import boto3
+import json
 from typing import Optional
 
 # Importing constants and pipeline modules from the project
@@ -77,7 +79,12 @@ async def index(request: Request):
     """
     Renders the main HTML form page for vehicle data input.
     """
-    policy_dropdown_data = load_json_data(r'notebook\filtered_policy_sales.json')
+    s3 = S3Client().s3_client
+    bucket = VehiclePredictorConfig().model_bucket_name
+    object_key = VehiclePredictorConfig().model_policy_json
+    response = s3.get_object(Bucket=bucket, Key=object_key)
+    json_content = response['Body'].read().decode('utf-8')
+    policy_dropdown_data = json.loads(json_content)
     data = [int(float(key)) for key in policy_dropdown_data.keys()]
     return templates.TemplateResponse(
             "vehicledata.html",{"request": request, "context": "Rendering", "options": data})
